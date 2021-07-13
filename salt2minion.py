@@ -28,21 +28,29 @@ def main():
 
 def minionCheckIfUP(getUserOption):
      # Quick check to see if a minion returns true with a ping
-    minionUp = ('True')
+    minionUp = (b'True')
     minion_check = subprocess.check_output(['salt', '*', 'test.ping'])
+    disallowed_characters = ":"
     # Check to see if "true" statement is there then continue
     if minionUp in minion_check:
         print("Minion(s) is up!")
         print("--------------------------")
         if getUserOption == '1':
         # This is to see what OS is running
-            lines = subprocess.Popen(['salt' '-G' 'os:CentOS' 'test.version'], stdout=subprocess.PIPE).communicate()[0]
-            osLine = print(lines.splitlines()[0]) + ('\n')
+            lines = subprocess.Popen(['salt', '-G', 'os:CentOS', 'test.version'], stdout=subprocess.PIPE)
+            proc = lines.communicate()[0]
+            test = proc.decode('utf-8') 
+            osLine = test.splitlines()[0]
+            print(osLine)
+            # For loop to eliminate the annoying characters it returns
+            for character in disallowed_characters:
+                osLine = osLine.replace(character, "")
+            # Call CentOS function after letting user know it is up
             print("CentOS minion is up!")
-            centos(osLine)
+            centos(osLine, getUserOption)
         elif getUserOption == '2':
         # Assuming that it does not match the CentOS then we call the correct one
-            lines = subprocess.Popen(['salt' '-G' 'os:Ubuntu' 'test.version'], stdout=subprocess.PIPE).communicate()[0]
+            lines = subprocess.Popen(['salt', '-G', 'os:Ubuntu', 'test.version'], stdout=subprocess.PIPE).communicate()[0]
             osLine = print(lines.splitlines()[0]) + ('\n')
             print("Ubuntu OS is up!")
             ubuntu(osLine)
@@ -73,29 +81,37 @@ def centos(osLine, getUserOption):
     # Start performing commands with salt per repo
     # Creating a directory called repo{#} to store a repo 
     index = ''
-    while True:
-        try:
-            repoDir = os.system("salt " + osLine, " cmd.run 'mkdir /repo'" + index)
-            break
-        except OSError:
-            if index:
-                index = '('+str(int(index[1:-1])+1)+')' # Append 1 to number in brackets
-            else:
-                index = '(1)'
-            pass # Go and try create file again
+    cmd = "salt " + str(osLine) + " cmd.run 'mkdir /repo'" + index
+    try:
+        dirCreate = subprocess.Popen(cmd, stderr=subprocess.PIPE, shell=True)
+        dirCreate.wait()
+        if index:
+            index = str(int(index[1:-1])+1) # Append 1 to number in brackets
+        else:
+            index = '1'
+        pass # Go and try create file again
+    except OSError:
+        print("Exiting... ")
+    repocmd = "salt " + str(osLine) + " cmd.run 'reposync --gpgcheck=1  --repoid=base -repoid=extras --repoid=updates --repoid=centosplus --download_path=/repo'"+ index
     # Pull down recent updates and store it in the created dir
-    os.system("salt " + osLine, " cmd.run 'reposync --gpgcheck=1 --repoid=base --repoid=extras --repoid=updates \
-        --repoid=centosplus --download_path=/repo'" + index)
-    os.system("salt " + osLine, " cmd.run 'createrepo /repo'" + index)
+    repoPull = subprocess.Popen(repocmd, stderr=subprocess.Pipe, shell=True)
+    repoPull.wait()
+
+    createrepocmd = "salt " + str(osLine) + " cmd.run 'creatrepo /repo'" + index
+    create_Repo = subprocess.Popen(createrepocmd, stderr=subprocess.PIPE, shell=True)
+    create_Repo.wait()
 
     # Display to the user that everything should be good to go (I hope)
     print("Local repo has been created and is listed below: \n")
-    os.system("salt " + osLine, " cmd.run 'ls -l /repo" + index)
-
+    list_files = "salt " + str(osLine) + " cmd.run 'ls -l /repo'" + index
+    listWait = subprocess.Popen(subprocess.Popen(list_files, stderr=subprocess.PIPE, shell=True)
+    listWait.wait()
     # Check to see if getUserOption was used
-    if getUserOption == '3':
-        ubuntu()
-
+    #if (getUserOption == '3'):
+    #    ubuntu()
+    #else:
+    #    exit()
+'''        
 def ubuntu(osLine):
     index = ''
     # While loop allows us to tack on a random number to get a proper directory creation
@@ -124,7 +140,7 @@ def ubuntu(osLine):
     # Display to the user that everything should be good to go (I hope)
     print("Local repo has been created and is listed below: \n")
     os.system("salt " + osLine, " cmd.run 'ls -l /repo" + index)
-
+'''
 # As always, call the main function
 if __name__ == '__main__':
     main()
