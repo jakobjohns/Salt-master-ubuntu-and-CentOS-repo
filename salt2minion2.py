@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+from progress.bar import Bar
 
 '''
     This script assumes a couple of things that are key for successful repository creation
@@ -78,30 +79,34 @@ def minionCheckIfUP(getUserOption):
         exit
     
 def centos(osLine, getUserOption):
+    print("Starting CentOS repo creation...")
     # Start performing commands with salt per repo
     # Creating a directory called repo{#} to store a repo 
-    index = '3'
-    cmd = "salt " + str(osLine) + " cmd.run 'mkdir /repo'" + index
+    index = ''
+    cmd = "salt " + str(osLine) + " cmd.run 'mkdir /repo'" + str(index)
     while True:
         try:
+            index = index + 1
             dirCreate = subprocess.Popen(cmd, stderr=subprocess.PIPE, shell=True)
             dirCreate.wait()
             break
-        except OSError:
-            if index:
-                index = str(int(index[1:-1])+1) # Append 1 to number in brackets
-            else:
-                index = '1'
+        except:
             pass # Go and try create file again
-    repocmd = "salt " + str(osLine) + " cmd.run 'reposync --repoid=base -repoid=extras --repoid=updates --repoid=centosplus --download_path=/repo'"+ index
+    repocmd = "salt " + str(osLine) + " cmd.run 'reposync --repoid=base -repoid=extras --repoid=updates --repoid=centosplus --download_path=/repo'"+ str(index)
     # Pull down recent updates and store it in the created dir
-    repoPull = subprocess.Popen(repocmd, stderr=subprocess.PIPE, shell=True)
-    repoPull.wait()
+    bar = Bar('Processing', max=100)
+    for i in range(100):
+        repoPull = subprocess.Popen(repocmd, stderr=subprocess.PIPE, shell=True)
+        repoPull.wait()
+        bar.next()
+    bar.finish()
 
     createrepocmd = "salt " + str(osLine) + " cmd.run 'creatrepo /repo'" + index
-    create_Repo = subprocess.Popen(createrepocmd, stderr=subprocess.PIPE, shell=True)
-    create_Repo.wait()
-
+    for i in range(100):
+        create_Repo = subprocess.Popen(createrepocmd, stderr=subprocess.PIPE, shell=True)
+        create_Repo.wait()
+        bar.next()
+    bar.finish()
     # Display to the user that everything should be good to go (I hope)
     print("Local repo has been created and is listed below: \n")
     list_files = "salt " + str(osLine) + " cmd.run 'ls -l /repo'" + index
@@ -109,22 +114,24 @@ def centos(osLine, getUserOption):
     listWait.wait()
     # Check to see if getUserOption was used
     if (getUserOption == '3'):
+        print("Starting Ubuntu repo creation...")
         ubuntu()
     else:
+        print("Terminating program")
+        print("----------------------------")
         exit()
       
 def ubuntu(osLine):
     index = ''
     # While loop allows us to tack on a random number to get a proper directory creation
+    cmd = "salt " + str(osLine) + " cmd.run 'mkdir /repo'" + str(index)
     while True:
         try:
-            repoDir = os.system("salt " + osLine, " cmd.run 'mkdir /repo'" + index)
+            index = index + 1
+            dirCreate = subprocess.Popen(cmd, stderr=subprocess.PIPE, shell=True)
+            dirCreate.wait()
             break
-        except OSError:
-            if index:
-                index = '('+str(int(index[1:-1])+1)+')' # Append 1 to number in brackets
-            else:
-                index = '(1)'
+        except:
             pass # Go and try create file again
     # Find the mirror.list file and change the base_path
     a_file = open("/etc/apt/mirror.list", "r")
@@ -136,11 +143,13 @@ def ubuntu(osLine):
     a_file.close()
 
     # Pull down recent updates and store it in the created dir
-    os.system("salt " + osLine, " cmd.run 'apt-mirror /repo'" + index)
+    cmd1 = "salt " + osLine, " cmd.run 'apt-mirror /repo'" + str(index)
+    subprocess.Popen(cmd1, stderr=subprocess.PIPE, shell=True)
 
     # Display to the user that everything should be good to go (I hope)
     print("Local repo has been created and is listed below: \n")
-    os.system("salt " + osLine, " cmd.run 'ls -l /repo" + index)
+    cmd3 = "salt " + osLine, " cmd.run 'ls -l /repo" + str(index)
+    subprocess.Popen(cmd3, stderr=subprocess.PIPE, shell=True)
 
 # As always, call the main function
 if __name__ == '__main__':
