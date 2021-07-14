@@ -94,21 +94,30 @@ def centos(osLine, getUserOption):
             print("Successfully created directory")
         except:
             pass # Go and try create file again
-    repocmd = "salt " + str(osLine) + " cmd.run 'reposync --repoid=base -repoid=extras --repoid=updates --repoid=centosplus --download_path=/repo'"+ str(index)
+    repocmd = "salt " + str(osLine) + " cmd.run 'reposync --repoid=base --download_path=/repo'"+ str(index)
+    repocmd1 = "salt " + str(osLine) + " cmd.run 'reposync --repoid=extras --download_path=/repo'"+ str(index)
+    repocmd2 = "salt " + str(osLine) + " cmd.run 'reposync --repoid=updates --download_path=/repo'"+ str(index)
+    repocmd3 = "salt " + str(osLine) + " cmd.run 'reposync --repoid=centosplus --download_path=/repo'"+ str(index)
     # Pull down recent updates and store it in the created dir
-    bar = Bar('Precessing'), max=100
-    repodir = subprocess.Popen(repocmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True), bar.next()
-    for i in range(100):
-        repodir.wait()
-    bar.finish()
+    repodir = subprocess.Popen(repocmd, stderr=subprocess.PIPE, shell=True)
+    repodir.wait(print("Downloading packages from base..."))
+    print("Finished downloading packages from base")
+
+    repodir = subprocess.Popen(repocmd1, stderr=subprocess.PIPE, shell=True)
+    repodir.wait(print("Downloading packages from extras..."))
+    print("Finished downloading packages from extras")
+
+    repodir = subprocess.Popen(repocmd2, stderr=subprocess.PIPE, shell=True)
+    repodir.wait(print("Downloading packages from updates..."))
+    print("Finished downloading packages from updates")
+
+    repodir = subprocess.Popen(repocmd3, stderr=subprocess.PIPE, shell=True)
+    repodir.wait(print("Downloading packages from centosplus..."))
+    print("Finished downloading packages from centosplus...")
 
     createrepocmd = "salt " + str(osLine) + " cmd.run 'creatrepo /repo'" + str(index)
-    with Bar('Processing') as bar:
-        for i in range(100):
-            create_Repo = subprocess.Popen(createrepocmd, stderr=subprocess.PIPE, shell=True)
-            create_Repo.wait()
-            bar.next()
-        bar.finish()
+    create_Repo = subprocess.Popen(createrepocmd, stderr=subprocess.PIPE, shell=True)
+    create_Repo.wait(print("Creating repo metadata..."))
     # Display to the user that everything should be good to go (I hope)
     print("Local repo has been created and is listed below: \n")
     list_files = "salt " + str(osLine) + " cmd.run 'ls -l /repo'" + str(index)
