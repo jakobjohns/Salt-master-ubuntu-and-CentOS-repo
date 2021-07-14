@@ -98,11 +98,12 @@ def centos(osLine, getUserOption):
     # Pull down recent updates and store it in the created dir
     with Bar('Processing') as bar:
         for b in range(100):
-            subprocess.Popen(repocmd, stderr=subprocess.PIPE, shell=True)
+            repodir = subprocess.Popen(repocmd, stderr=subprocess.PIPE, shell=True)
+            repodir.wait()
             bar.next()
         bar.finish()
 
-    createrepocmd = "salt " + str(osLine) + " cmd.run 'creatrepo /repo'" + index
+    createrepocmd = "salt " + str(osLine) + " cmd.run 'creatrepo /repo'" + str(index)
     with Bar('Processing') as bar:
         for i in range(100):
             create_Repo = subprocess.Popen(createrepocmd, stderr=subprocess.PIPE, shell=True)
@@ -111,7 +112,7 @@ def centos(osLine, getUserOption):
         bar.finish()
     # Display to the user that everything should be good to go (I hope)
     print("Local repo has been created and is listed below: \n")
-    list_files = "salt " + str(osLine) + " cmd.run 'ls -l /repo'" + index
+    list_files = "salt " + str(osLine) + " cmd.run 'ls -l /repo'" + str(index)
     listWait = subprocess.Popen(subprocess.Popen(list_files, stderr=subprocess.PIPE, shell=True))
     listWait.wait()
     # Check to see if getUserOption was used
