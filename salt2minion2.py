@@ -84,16 +84,18 @@ def centos(osLine, getUserOption):
     # Creating a directory called repo{#} to store a repo 
     index = int()
     testLoop = False
+    word = 'cannot'
     cmd = "salt " + str(osLine) + " cmd.run 'mkdir /repo'" + str(index)
     while not testLoop:
-        try:
-            dirCreate = subprocess.Popen(cmd, stderr=subprocess.PIPE, shell=True)
-            dirCreate.wait()
-            testLoop = True
-            print("Successfully created directory")
-        except:
+        dirCreate = subprocess.Popen(cmd, stderr=subprocess.PIPE, shell=True)
+        dirCreate.wait()
+        if word in dirCreate:
+            print("Trying again...")
             index = index + 1
-            pass # Go and try create file again
+        else:
+            continue
+        testLoop = True
+        print("Successfully created directory")
     
     # Pull down recent updates and store it in the created dir
     userRepo = input("What repo would you like to pull from? (type -1 if done): ")
