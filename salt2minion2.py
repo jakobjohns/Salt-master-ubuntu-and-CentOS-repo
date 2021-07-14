@@ -99,8 +99,8 @@ def centos(osLine, getUserOption):
     with Bar('Processing') as bar:
         for b in range(100):
             repodir = subprocess.Popen(repocmd, stderr=subprocess.PIPE, shell=True)
-            repodir.wait()
             bar.next()
+            repodir.wait()
         bar.finish()
 
     createrepocmd = "salt " + str(osLine) + " cmd.run 'creatrepo /repo'" + str(index)
