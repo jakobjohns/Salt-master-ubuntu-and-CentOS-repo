@@ -88,7 +88,6 @@ def centos(osLine, getUserOption):
     cmd = "salt " + str(osLine) + " cmd.run 'mkdir /repo'" + str(index)
     while not testLoop:
         dirCreate = subprocess.Popen(cmd, stderr=subprocess.PIPE, shell=True)
-        dirCreate.wait()
         if word in str(dirCreate):
             print("Trying again...")
             index = index + 1
