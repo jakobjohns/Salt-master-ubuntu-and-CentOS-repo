@@ -96,8 +96,8 @@ def centos(osLine, getUserOption):
             pass # Go and try create file again
     
     # Pull down recent updates and store it in the created dir
+    userRepo = input("What repo would you like to pull from? (type -1 if done): ")
     while (userRepo != '-1'):
-        userRepo = input("What repo would you like to pull from? (type -1 if done): ")
         repocmd = "salt " + str(osLine) + " cmd.run 'reposync --repoid=" + userRepo + " --download_path=/repo'"+ str(index)
         repodir = subprocess.Popen(repocmd, stderr=subprocess.PIPE, shell=True)
         repodir.wait(print("Downloading packages from " + userRepo + ", this may take a while..."))
