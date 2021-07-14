@@ -95,13 +95,14 @@ def centos(osLine, getUserOption):
         except:
             pass # Go and try create file again
     repocmd = "salt " + str(osLine) + " cmd.run 'reposync --repoid=base -repoid=extras --repoid=updates --repoid=centosplus --download_path=/repo'"+ str(index)
+    done = None
     # Pull down recent updates and store it in the created dir
-    with Bar('Processing') as bar:
-        for b in range(100):
-            repodir = subprocess.Popen(repocmd, stderr=subprocess.PIPE, shell=True)
-            bar.next()
-            repodir.wait()
-        bar.finish()
+    repodir = subprocess.Popen(repocmd, stderr=subprocess.PIPE, shell=True)
+    while repodir.poll() is done:
+            line = repodir.stdout.readline(77)
+            print; line.strip()
+            if "Done" in line:
+                done = True
 
     createrepocmd = "salt " + str(osLine) + " cmd.run 'creatrepo /repo'" + str(index)
     with Bar('Processing') as bar:
