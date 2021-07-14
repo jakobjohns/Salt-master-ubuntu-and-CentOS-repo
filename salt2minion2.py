@@ -89,9 +89,10 @@ def centos(osLine, getUserOption):
     while not testLoop:
         dirCreate = subprocess.Popen(cmd, stderr=subprocess.PIPE, shell=True)
         dirCreate.wait()
-        if word in dirCreate:
+        if word in str(dirCreate):
             print("Trying again...")
             index = index + 1
+            pass
         else:
             continue
         testLoop = True
