@@ -82,7 +82,7 @@ def centos(osLine, getUserOption):
     print("Starting CentOS repo creation...")
     # Start performing commands with salt per repo
     # Creating a directory called repo{#} to store a repo 
-    index = ''
+    index = 0
     testLoop = False
     cmd = "salt " + str(osLine) + " cmd.run 'mkdir /repo'" + str(index)
     while not testLoop:
@@ -91,6 +91,7 @@ def centos(osLine, getUserOption):
             dirCreate = subprocess.Popen(cmd, stderr=subprocess.PIPE, shell=True)
             dirCreate.wait()
             testLoop = True
+            print("Successfully created directory")
         except:
             pass # Go and try create file again
     repocmd = "salt " + str(osLine) + " cmd.run 'reposync --repoid=base -repoid=extras --repoid=updates --repoid=centosplus --download_path=/repo'"+ str(index)
