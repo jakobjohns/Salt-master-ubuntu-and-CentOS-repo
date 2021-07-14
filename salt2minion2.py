@@ -87,12 +87,12 @@ def centos(osLine, getUserOption):
     cmd = "salt " + str(osLine) + " cmd.run 'mkdir /repo'" + str(index)
     while not testLoop:
         try:
-            index = index + 1
             dirCreate = subprocess.Popen(cmd, stderr=subprocess.PIPE, shell=True)
             dirCreate.wait()
             testLoop = True
             print("Successfully created directory")
         except:
+            index = index + 1
             pass # Go and try create file again
     
     # Pull down recent updates and store it in the created dir
