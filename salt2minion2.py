@@ -96,19 +96,19 @@ def centos(osLine, getUserOption):
             pass # Go and try create file again
     repocmd = "salt " + str(osLine) + " cmd.run 'reposync --repoid=base -repoid=extras --repoid=updates --repoid=centosplus --download_path=/repo'"+ str(index)
     # Pull down recent updates and store it in the created dir
-    bar = Bar('Processing', max=100)
-    for i in range(100):
-        repoPull = subprocess.Popen(repocmd, stderr=subprocess.PIPE, shell=True)
-        repoPull.wait()
-        bar.next()
-    bar.finish()
+    with Bar('Processing') as bar:
+        for b in range(100):
+            subprocess.Popen(repocmd, stderr=subprocess.PIPE, shell=True)
+            bar.next()
+        bar.finish()
 
     createrepocmd = "salt " + str(osLine) + " cmd.run 'creatrepo /repo'" + index
-    for i in range(100):
-        create_Repo = subprocess.Popen(createrepocmd, stderr=subprocess.PIPE, shell=True)
-        create_Repo.wait()
-        bar.next()
-    bar.finish()
+    with Bar('Processing') as bar:
+        for i in range(100):
+            create_Repo = subprocess.Popen(createrepocmd, stderr=subprocess.PIPE, shell=True)
+            create_Repo.wait()
+            bar.next()
+        bar.finish()
     # Display to the user that everything should be good to go (I hope)
     print("Local repo has been created and is listed below: \n")
     list_files = "salt " + str(osLine) + " cmd.run 'ls -l /repo'" + index
