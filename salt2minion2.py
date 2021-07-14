@@ -97,10 +97,11 @@ def centos(osLine, getUserOption):
     repocmd = "salt " + str(osLine) + " cmd.run 'reposync --repoid=base -repoid=extras --repoid=updates --repoid=centosplus --download_path=/repo'"+ str(index)
     done = None
     # Pull down recent updates and store it in the created dir
-    repodir = subprocess.Popen(repocmd, stderr=subprocess.PIPE, shell=True)
+    repodir = subprocess.Popen(repocmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     while repodir.poll() is done:
-            line = repodir.stdout.readline(77)
-            print; line.strip()
+            line = str(repodir)
+            line2 = repodir.stdout.readline(77)
+            print(line2.strip())
             if "Done" in line:
                 done = True
 
