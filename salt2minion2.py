@@ -83,13 +83,14 @@ def centos(osLine, getUserOption):
     # Start performing commands with salt per repo
     # Creating a directory called repo{#} to store a repo 
     index = ''
+    testLoop = False
     cmd = "salt " + str(osLine) + " cmd.run 'mkdir /repo'" + str(index)
-    while True:
+    while not testLoop:
         try:
             index = index + 1
             dirCreate = subprocess.Popen(cmd, stderr=subprocess.PIPE, shell=True)
             dirCreate.wait()
-            break
+            testLoop = True
         except:
             pass # Go and try create file again
     repocmd = "salt " + str(osLine) + " cmd.run 'reposync --repoid=base -repoid=extras --repoid=updates --repoid=centosplus --download_path=/repo'"+ str(index)
