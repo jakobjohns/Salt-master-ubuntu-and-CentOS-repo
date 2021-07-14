@@ -82,7 +82,7 @@ def centos(osLine, getUserOption):
     print("Starting CentOS repo creation...")
     # Start performing commands with salt per repo
     # Creating a directory called repo{#} to store a repo 
-    index = 0
+    index = int()
     testLoop = False
     cmd = "salt " + str(osLine) + " cmd.run 'mkdir /repo'" + str(index)
     while not testLoop:
@@ -94,26 +94,19 @@ def centos(osLine, getUserOption):
             print("Successfully created directory")
         except:
             pass # Go and try create file again
-    repocmd = "salt " + str(osLine) + " cmd.run 'reposync --repoid=base --download_path=/repo'"+ str(index)
-    repocmd1 = "salt " + str(osLine) + " cmd.run 'reposync --repoid=extras --download_path=/repo'"+ str(index)
-    repocmd2 = "salt " + str(osLine) + " cmd.run 'reposync --repoid=updates --download_path=/repo'"+ str(index)
-    repocmd3 = "salt " + str(osLine) + " cmd.run 'reposync --repoid=centosplus --download_path=/repo'"+ str(index)
+    
     # Pull down recent updates and store it in the created dir
-    repodir = subprocess.Popen(repocmd, stderr=subprocess.PIPE, shell=True)
-    repodir.wait(print("Downloading packages from base..."))
-    print("Finished downloading packages from base")
-
-    repodir = subprocess.Popen(repocmd1, stderr=subprocess.PIPE, shell=True)
-    repodir.wait(print("Downloading packages from extras..."))
-    print("Finished downloading packages from extras")
-
-    repodir = subprocess.Popen(repocmd2, stderr=subprocess.PIPE, shell=True)
-    repodir.wait(print("Downloading packages from updates..."))
-    print("Finished downloading packages from updates")
-
-    repodir = subprocess.Popen(repocmd3, stderr=subprocess.PIPE, shell=True)
-    repodir.wait(print("Downloading packages from centosplus..."))
-    print("Finished downloading packages from centosplus...")
+    while (userRepo != '-1'):
+        userRepo = input("What repo would you like to pull from? (type -1 if done): ")
+        repocmd = "salt " + str(osLine) + " cmd.run 'reposync --repoid=" + userRepo + " --download_path=/repo'"+ str(index)
+        repodir = subprocess.Popen(repocmd, stderr=subprocess.PIPE, shell=True)
+        repodir.wait(print("Downloading packages from " + userRepo + ", this may take a while..."))
+        print("Finished downloading packages from " + userRepo + " at /repo" + str(index))
+        choice = input("Would you like to do another? (type Y or N): " )
+        if (choice.upper == 'Y'):
+            continue
+        else:
+            break
 
     createrepocmd = "salt " + str(osLine) + " cmd.run 'creatrepo /repo'" + str(index)
     create_Repo = subprocess.Popen(createrepocmd, stderr=subprocess.PIPE, shell=True)
