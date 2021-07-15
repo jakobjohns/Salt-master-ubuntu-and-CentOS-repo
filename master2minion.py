@@ -45,8 +45,10 @@ def mount():
                 input("Press enter to continue...")
                 break
             elif (a == 2):
+                parti = "nothing yet"
                 fs_type = input("Please enter the type of filesystem: (ext4, xfs, etc.): ")
                 mount_point = input("What is the path of the mount point? (Your repo will be created here) ")
+                fullmountpoint = "sudo mount -t " + fs_type + " " + parti + " " + mount_point
                 break
             elif (a == 3):
                 mayexit = False
