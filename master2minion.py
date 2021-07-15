@@ -49,7 +49,7 @@ def mount():
                 mount_point = input("What is the path of the mount point? (Your repo will be created here) ")
                 fullmountpoint = "sudo mount -t " + fs_type + " " + parti + " " + mount_point
                 break
-            elif (a == 9):
+            elif (a == 3):
                 mayexit = False
                 minionCheckIfUP(fullmountpoint, fs_type, parti, mount_point)
                 break
