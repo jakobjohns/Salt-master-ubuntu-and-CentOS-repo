@@ -47,7 +47,7 @@ def mount():
             elif (a == 2):
                 parti = "nothing yet"
                 fs_type = input("Please enter the type of filesystem: (ext4, xfs, etc.): ")
-                mount_point = input("What is the path of the mount point? (Your repo will be created here) ")
+                mount_point = input("What is the path of the mount point? (Your repo will be created here): ")
                 fullmountpoint = "sudo mount -t " + fs_type + " " + parti + " " + mount_point
                 break
             elif (a == 3):
@@ -60,14 +60,14 @@ def minionCheckIfUP(fullmountpoint, fs_type, parti, mount_point):
     operatingsys = input("What is the name of the operating system you would like to create a repo in? (CentOS, Ubuntu, CentOS-Docker, Ubuntu-Docker): ")
     salt_ping = "salt '*' test.ping"
     os.system(salt_ping)
-    choice = input("What is the name of the machine? (Choices listed above.):  ")
-    if (operatingsys.upper == "CENTOS"):
+    choice = input("What is the name of the machine? (Spell it exactly, choices listed above, true means the machine is up and running, do not include colon.):  ")
+    if (operatingsys.upper() == "CENTOS"):
         centos(operatingsys, choice, fullmountpoint, fs_type, parti, mount_point)
-    elif (operatingsys.upper == "UBUNTU"):
+    elif (operatingsys.upper() == "UBUNTU"):
         ubuntu(operatingsys, choice, fullmountpoint, fs_type, parti, mount_point)
-    elif (operatingsys.upper == "CENTOS-DOCKER"):
+    elif (operatingsys.upper() == "CENTOS-DOCKER"):
         centos_docker(operatingsys, choice, fullmountpoint, fs_type, parti, mount_point)
-    elif (operatingsys.upper == "UBUNTU-DOCKER"):
+    elif (operatingsys.upper() == "UBUNTU-DOCKER"):
         ubuntu_docker(operatingsys, choice, fullmountpoint, fs_type, parti, mount_point)
     else:
         print("Invalid option...")
