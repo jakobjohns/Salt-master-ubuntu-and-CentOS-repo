@@ -9,23 +9,23 @@ def main():
 
 def minionCheckIfUP():
      # Quick check to see if a minion returns true with a ping
-    operatingsys = input("What is the name of the operating system you would like to create a repo in? (CentOS, Ubuntu, CentOS-Docker, Ubuntu-Docker): ")
+    operatingsys = input("What is the name of the distribution you would like to create a repo in? (CentOS, Ubuntu, CentOS-Docker, Ubuntu-Docker): ")
     salt_ping = "salt '*' test.ping"
     os.system(salt_ping)
     choice = input("What is the name of the machine? (Spell it exactly, choices listed above, true means the machine is up and running, do not include colon.):  ")
     if (operatingsys.upper() == "CENTOS"):
-        centos(operatingsys, choice)
+        centos(choice)
     elif (operatingsys.upper() == "UBUNTU"):
-        ubuntu(operatingsys, choice)
+        ubuntu(choice)
     elif (operatingsys.upper() == "CENTOS-DOCKER"):
-        centos_docker(operatingsys)
+        centos_docker(choice)
     elif (operatingsys.upper() == "UBUNTU-DOCKER"):
-        ubuntu_docker(operatingsys)
+        ubuntu_docker(choice)
     else:
         print("Invalid option...")
         exit()
 
-def centos(operatingsys, choice):
+def centos(choice):
     print("Starting CentOS repo creation...")
     
     file_location = input("What is the path of the file you would like to pull from: ")
@@ -48,7 +48,7 @@ def centos(operatingsys, choice):
     # Display to the user that everything should be good to go (I hope)
     print("Local repo has been created at: " + file_location)
       
-def ubuntu(operatingsys, choice):
+def ubuntu(choice):
     print("Starting Ubuntu repo creation...")
     
     # Get location for storing the repo
@@ -68,7 +68,7 @@ def ubuntu(operatingsys, choice):
     # Display to the user that everything should be good to go (I hope)
     print("Local repo has been created. \n")
 
-def centos_docker(operatingsys, choice):
+def centos_docker(choice):
     print("Starting CentOS repo creation...")
     
     # Get location for storing the repo
@@ -85,7 +85,7 @@ def centos_docker(operatingsys, choice):
     # Display to the user that everything should be good to go (I hope)
     print("Local repo has been created at: " + file_location)
 
-def ubuntu_docker(operatingsys, choice):
+def ubuntu_docker(choice):
     print("Starting Ubuntu repo creation...")
     
     file_location = input("What is the path of the file you would like to pull from: ")
