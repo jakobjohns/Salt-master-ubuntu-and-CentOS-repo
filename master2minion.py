@@ -56,7 +56,7 @@ def ubuntu(choice):
     
     # Find the mirror.list file and change the base_path
     make_bak = "salt " + choice + " cmd.run 'mv /etc/apt/mirror.list /etc/apt/mirror.list.bak'"
-    set_base_path = "salt " + choice + " cmd.run 'echo 'set base_path " + file_location + "' >> /etc/apt/mirror.list"
+    set_base_path = "salt " + choice + " cmd.run 'echo 'set base_path " + file_location + "'" + " >> /etc/apt/mirror.list'"
 
     os.system(make_bak)
     os.system(set_base_path)
@@ -92,9 +92,9 @@ def ubuntu_docker(choice):
     
     # Find the mirror.list file and change the base_path
     make_bak = "salt " + choice + " cmd.run 'mv /etc/apt/mirror.list /etc/apt/mirror.list.bak'"
-    set_base_path = "salt " + choice + " cmd.run 'echo 'set base_path " + file_location + "' >> /etc/apt/mirror.list"
+    set_base_path = "salt " + choice + " cmd.run 'echo 'set base_path " + file_location + "'" + " >> /etc/apt/mirror.list'"
     docker_repo_echo = "salt " + choice + " cmd.run 'echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-        $(lsb_release -cs) stable' >> /etc/apt/mirror.list"
+        $(lsb_release -cs) stable' >> /etc/apt/mirror.list'"
     os.system(make_bak)
     os.system(set_base_path)
     os.system(docker_repo_echo)
