@@ -74,6 +74,7 @@ def centos_docker(choice):
     # Get location for storing the repo
     file_location = input("What is the path of the file you would like to pull from: ")
     
+    
     # Pull down recent updates and store it in the created dir
     repocmd = "salt " + choice + " cmd.run 'repotrack --repoid=docker-ce --download_path=" + file_location + "'"
     os.system(repocmd)
